@@ -22,21 +22,21 @@ import (
 	"github.com/ZenLiuCN/mpc"
 )
 
-type GitResolver struct {
+type Resolver struct {
 }
 
-func (g GitResolver) Versions(module mpc.Module) mpc.Versions {
+func (g Resolver) Versions(module mpc.Module) mpc.Versions {
 	panic("implement me")
 }
 
-func (g GitResolver) Info(module mpc.Module, version mpc.Version) *mpc.Info {
+func (g Resolver) Info(module mpc.Module, version mpc.Version) *mpc.Info {
 	panic("implement me")
 }
 
-func (g GitResolver) Mod(module mpc.Module, version mpc.Version) mpc.GoMod {
+func (g Resolver) Mod(module mpc.Module, version mpc.Version) mpc.GoMod {
 	panic("implement me")
 }
 
-func (g GitResolver) Zip(module mpc.Module, version mpc.Version) mpc.GoZip {
+func (g Resolver) Zip(module mpc.Module, version mpc.Version) mpc.GoZip {
 	panic("implement me")
 }
