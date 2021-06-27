@@ -24,5 +24,5 @@ func TestBit8(t *testing.T) {
 	b := Bit8(0)
 	b1 := b.Set(5)
 	b2 := b.Reset(5)
-	t.Logf("%08b %08b  %08b %+v", b, b1, b2, b2.At(5))
+	t.Logf("%08b %08b %t %08b %+v", b, b1, b1.At(5), b2, b2.At(5))
 }

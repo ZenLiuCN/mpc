@@ -24,7 +24,7 @@ func (s Bit64) At(pos int) bool {
 	if pos < 0 || pos >= 64 {
 		return false
 	}
-	return s&(1<<pos) != 0
+	return 1&(s>>pos) != 0
 }
 func (s Bit64) Set(pos int) Bit64 {
 	if pos < 0 || pos >= 64 {
@@ -45,7 +45,7 @@ func (s Bit32) At(pos int) bool {
 	if pos < 0 || pos >= 32 {
 		return false
 	}
-	return s&(1<<pos) != 0
+	return 1&(s>>pos) != 0
 }
 func (s Bit32) Set(pos int) Bit32 {
 	if pos < 0 || pos >= 32 {
@@ -66,7 +66,7 @@ func (s Bit16) At(pos int) bool {
 	if pos < 0 || pos >= 16 {
 		return false
 	}
-	return s&(1<<pos) != 0
+	return 1&(s>>pos) != 0
 }
 func (s Bit16) Set(pos int) Bit16 {
 	if pos < 0 || pos >= 16 {
@@ -87,7 +87,7 @@ func (s Bit8) At(pos int) bool {
 	if pos < 0 || pos >= 8 {
 		return false
 	}
-	return s&(1<<pos) != 0
+	return 1&(s>>pos) != 0
 }
 func (s Bit8) Set(pos int) Bit8 {
 	if pos < 0 || pos >= 8 {
