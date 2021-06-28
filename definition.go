@@ -235,3 +235,33 @@ func sumCmdProcessor(req string) (m Module, v Version, c Cmd, s SumCmd, p string
 	}
 	return
 }
+func BuildCmd(proxy string, cmd Cmd, module Module, version Version) string {
+	switch cmd {
+	case CmdLatest:
+		return fmt.Sprintf("%s/%s/@latest", proxy, module)
+	case CmdList:
+		return fmt.Sprintf("%s/%s/@v/list", proxy, module)
+	case CmdInfo:
+		return fmt.Sprintf("%s/%s/@v/%s.info", proxy, module, version)
+	case CmdMod:
+		return fmt.Sprintf("%s/%s/@v/%s.mod", proxy, module, version)
+	case CmdZip:
+		return fmt.Sprintf("%s/%s/@v/%s.zip", proxy, module, version)
+	default:
+		return ""
+	}
+}
+func BuildSumCmd(proxy string, cmd SumCmd, module Module, version Version, param string) string {
+	switch cmd {
+	case SumSupported:
+		return fmt.Sprintf("%s/supported", proxy)
+	case SumLatest:
+		return fmt.Sprintf("%s/latest", proxy)
+	case SumLookup:
+		return fmt.Sprintf("%s/lookup/%s@%s", proxy, module, version)
+	case SumTile:
+		return fmt.Sprintf("%s/tile/%s", proxy, param)
+	default:
+		return ""
+	}
+}
