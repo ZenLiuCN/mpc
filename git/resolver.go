@@ -28,22 +28,20 @@ import (
 )
 
 type Resolver struct {
-	git         *Git
-	Auth        transport.AuthMethod
-	Mapping     map[string]string
-	mappingKeys []string
+	git *Git
+	//current only on auth method
+	Auth transport.AuthMethod
+	//Mapping for resolve a Module to git repository
+	// key and value must end with slash '/'
+	Mapping map[string]string
 }
 
 /**
 resolve a gaven module to it's clone uri and repo name
 */
 func (s *Resolver) resolve(module mpc.Module) (uri string, name string, path string) {
-	if s.mappingKeys == nil {
-		for k := range s.Mapping {
-			s.mappingKeys = append(s.mappingKeys, k)
-		}
-	}
-	for _, key := range s.mappingKeys {
+
+	for key, value := range s.Mapping {
 		if strings.HasPrefix(string(module), key) {
 			/**
 			a module from git is prefix with a marker, and remain part is a git uri or uri with paths
@@ -58,7 +56,7 @@ func (s *Resolver) resolve(module mpc.Module) (uri string, name string, path str
 			} else {
 				name = unPrefix
 			}
-			uri = fmt.Sprintf("%s%s.git", s.Mapping[key], name)
+			uri = fmt.Sprintf("%s%s.git", value, name)
 			return
 		}
 	}

@@ -54,14 +54,36 @@ func TestResolver_resolve(t *testing.T) {
 			wantName: "some",
 			wantPath: "path",
 		},
+		{
+			name: "resolve test without path",
+			fields: fields{Mapping: map[string]string{
+				"git.x/": "git@git.x.com/",
+			}},
+			args: args{
+				"git.x/some",
+			},
+			wantUri:  "git@git.x.com/some.git",
+			wantName: "some",
+			wantPath: "",
+		}, {
+			name: "resolve test long path",
+			fields: fields{Mapping: map[string]string{
+				"git.x/": "git@git.x.com/",
+			}},
+			args: args{
+				"git.x/some/p1/p2/p3",
+			},
+			wantUri:  "git@git.x.com/some.git",
+			wantName: "some",
+			wantPath: "p1/p2/p3",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &Resolver{
-				git:         tt.fields.git,
-				Auth:        tt.fields.Auth,
-				Mapping:     tt.fields.Mapping,
-				mappingKeys: tt.fields.mappingKeys,
+				git:     tt.fields.git,
+				Auth:    tt.fields.Auth,
+				Mapping: tt.fields.Mapping,
 			}
 			gotUri, gotName, gotPath := s.resolve(tt.args.module)
 			if gotUri != tt.wantUri {
