@@ -34,6 +34,8 @@ type Resolver struct {
 	//Mapping for resolve a Module to git repository
 	// key and value must end with slash '/'
 	Mapping map[string]string
+	//for cache resolved data
+	cache Cache
 }
 
 /**
@@ -67,21 +69,15 @@ func (s *Resolver) cloneOrOpen(uri string, name string) (repo *Repo, err error) 
 	if os.IsExist(err) {
 		repo, err = s.git.Open(dir)
 		if err != nil {
-			return nil, err
+			return
 		}
 		err = repo.Pull(s.Auth)
-		if err != nil {
-			return nil, err
-		}
-		return repo, nil
+		return
 	} else if err != nil {
-		return nil, err
+		return
 	}
 	repo, err = s.git.Clone(uri, dir, s.Auth) //todo may resolved not a repo
-	if err != nil {
-		return nil, err
-	}
-	return repo, nil
+	return
 }
 func (s *Resolver) Versions(module mpc.Module) mpc.Versions {
 	panic("implement me")
