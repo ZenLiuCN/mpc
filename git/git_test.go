@@ -31,16 +31,15 @@ const (
 )
 
 func TestGitHttpClone(t *testing.T) {
-	g := Git(0)
-	r, err := g.Clone(HTT)
+	g := new(Git)
+	r, err := g.Clone(HTT, "", nil)
 	assert.Nil(t, err)
 	t.Logf("%+v ", r)
 }
 func TestGitSSHClone(t *testing.T) {
-	g := Git(0)
+	g := new(Git)
 	auth, err := ssh.NewPublicKeys("git", []byte(PEM), "")
 	assert.Nil(t, err)
-	r, dir, err := g.CloneAuth(SSH, auth)
+	_, err = g.Clone(SSH, "", auth)
 	assert.Nil(t, err)
-	t.Logf("%+v %s", r, dir)
 }

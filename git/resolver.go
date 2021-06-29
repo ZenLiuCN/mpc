@@ -19,24 +19,84 @@
 package git
 
 import (
+	"fmt"
 	"github.com/ZenLiuCN/mpc"
+	"github.com/go-git/go-git/v5/plumbing/transport"
+	"io/ioutil"
+	"os"
+	"strings"
 )
 
 type Resolver struct {
+	git         *Git
+	Auth        transport.AuthMethod
+	Mapping     map[string]string
+	mappingKeys []string
 }
 
-func (g Resolver) Versions(module mpc.Module) mpc.Versions {
+/**
+resolve a gaven module to it's clone uri and repo name
+*/
+func (s *Resolver) resolve(module mpc.Module) (uri string, name string, path string) {
+	if s.mappingKeys == nil {
+		for k := range s.Mapping {
+			s.mappingKeys = append(s.mappingKeys, k)
+		}
+	}
+	for _, key := range s.mappingKeys {
+		if strings.HasPrefix(string(module), key) {
+			/**
+			a module from git is prefix with a marker, and remain part is a git uri or uri with paths
+			eg: git.pkg/abc/sl => git@ssh.some.com/abc.git and 'sl' consider as a path
+			*/
+			unPrefix := strings.TrimPrefix(string(module), key)
+			idx := strings.Index(unPrefix, "/")
+			if idx > 0 {
+				x := strings.SplitN(strings.TrimPrefix(string(module), key), "/", 2)
+				name = x[0]
+				path = x[1]
+			} else {
+				name = unPrefix
+			}
+			uri = fmt.Sprintf("%s%s.git", s.Mapping[key], name)
+			return
+		}
+	}
+	return
+}
+func (s *Resolver) cloneOrOpen(uri string, name string) (repo *Repo, err error) {
+	dir, err := ioutil.TempDir("", "repo_"+name)
+	if os.IsExist(err) {
+		repo, err = s.git.Open(dir)
+		if err != nil {
+			return nil, err
+		}
+		err = repo.Pull(s.Auth)
+		if err != nil {
+			return nil, err
+		}
+		return repo, nil
+	} else if err != nil {
+		return nil, err
+	}
+	repo, err = s.git.Clone(uri, dir, s.Auth) //todo may resolved not a repo
+	if err != nil {
+		return nil, err
+	}
+	return repo, nil
+}
+func (s *Resolver) Versions(module mpc.Module) mpc.Versions {
 	panic("implement me")
 }
 
-func (g Resolver) Info(module mpc.Module, version mpc.Version) *mpc.Info {
+func (s *Resolver) Info(module mpc.Module, version mpc.Version) *mpc.Info {
 	panic("implement me")
 }
 
-func (g Resolver) Mod(module mpc.Module, version mpc.Version) mpc.GoMod {
+func (s *Resolver) Mod(module mpc.Module, version mpc.Version) mpc.GoMod {
 	panic("implement me")
 }
 
-func (g Resolver) Zip(module mpc.Module, version mpc.Version) mpc.GoZip {
+func (s *Resolver) Zip(module mpc.Module, version mpc.Version) mpc.GoZip {
 	panic("implement me")
 }
